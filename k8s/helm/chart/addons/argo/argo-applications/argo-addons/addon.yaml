@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: 'addon-appset'
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+    applicationsSync: create-update
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchExpressions:
+                  - key: clusterName
+                    operator: Exists
+          - git:
+              repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+              revision: main
+              files: 
+                - path: 'k8s/helm/chart/addons/kube-system/*/values.yaml'           
+  template:
+    metadata:
+      name: '{{ .path.basename }}-{{ .nameNormalized }}'   
+      namespace: argocd
+      labels:
+        vpcName: '{{ index .metadata.labels "vpcName" }}'
+        type: addon
+        app: '{{ .path.basename }}'
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: .;/charts/templates
+    spec: 
+      project: default
+      source:
+        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        targetRevision: main
+        path: '{{ .path.path }}'
+        helm:
+          releaseName: '{{ .path.basename }}'
+          valueFiles:
+            - 'values.yaml'
+          ignoreMissingValueFiles: true            
+      destination:
+        name: '{{ .name }}'
+        namespace: 'kube-system'
+      syncPolicy: 
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - RespectIgnoreDifferences=true

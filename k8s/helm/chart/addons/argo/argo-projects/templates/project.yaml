@@ -1,0 +1,21 @@
+{{- range $path, $_ := .Files.Glob "apps/*/{Chart.yaml,kustomization.yaml}" }}
+# Iterating over files matching the specified glob pattern ("apps/*/{Chart.yaml,kustomization.yaml}") and capturing the path of each matched file in the $path variable
+# So ,below yaml will create Project for each helm chart (application) present in apps folder with name of folder (which is namespace and name of helm chart)
+# Folder name of the application must be same as its namespace (need to check)
+# addons will be under which project?
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+   name: {{ dir $path | base }}
+   namespace: argocd
+spec:
+  sourceRepos:
+  - '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+{{- end }}

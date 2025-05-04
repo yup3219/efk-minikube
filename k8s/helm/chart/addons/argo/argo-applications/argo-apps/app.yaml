@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: 'apps-appset'
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+    applicationsSync: create-update
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchExpressions:
+                  - key: clusterName
+                    operator: Exists
+              #      values:
+              #        - 'minikube-cluster'
+          - git:
+              repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+              revision: main
+              files: 
+                - path: 'k8s/helm/chart/apps/*/values.yaml'             
+  template:
+    metadata:
+      name: '{{ .path.basename }}-{{ .nameNormalized }}'   
+      namespace: argocd
+      labels:
+        type: app
+        app: '{{ .path.basename }}'
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: .;/charts/templates
+    spec: 
+      project: '{{ .path.basename }}'
+      source:
+        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        targetRevision: main
+        path: '{{ .path.path }}'
+        helm:
+          releaseName: '{{ .path.basename }}'
+          valueFiles:
+            - 'values.yaml'
+          ignoreMissingValueFiles: true        
+      destination:
+        name: "{{ .name }}"
+        namespace: '{{ .path.basename }}'
+      syncPolicy: 
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - RespectIgnoreDifferences=true
