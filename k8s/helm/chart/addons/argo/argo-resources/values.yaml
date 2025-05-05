@@ -6,7 +6,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-cd
         helm:
@@ -24,7 +24,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-projects
         helm:
@@ -43,7 +43,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-resources
         helm:
@@ -62,7 +62,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-applications/argo-apps
         directory:
@@ -79,7 +79,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-applications/argo-addons
         directory:
@@ -96,7 +96,7 @@ argocd-apps:
       additionalAnnotations: {}
       project: default
       source:
-        repoURL:  https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL:  https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: k8s/helm/chart/addons/argo/argo-applications/argo-monitoring
         directory:
@@ -114,7 +114,7 @@ argocd-apps:
 #      additionalAnnotations: {}
 #      project: default
 #      source:
-#        repoURL:  https://github.com/yup3219/grafana-monitoring-minikube.git
+#        repoURL:  https://github.com/yup3219/efk-minikube.git
 #        targetRevision: main
 #        path: helm/chart/addons/argo/argo-applications/argo-infra
 #        directory:

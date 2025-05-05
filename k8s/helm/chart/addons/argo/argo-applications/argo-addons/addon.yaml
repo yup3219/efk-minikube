@@ -16,7 +16,7 @@ spec:
                   - key: clusterName
                     operator: Exists
           - git:
-              repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+              repoURL: https://github.com/yup3219/efk-minikube.git
               revision: main
               files: 
                 - path: 'k8s/helm/chart/addons/kube-system/*/values.yaml'           
@@ -33,7 +33,7 @@ spec:
     spec: 
       project: default
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: '{{ .path.path }}'
         helm:

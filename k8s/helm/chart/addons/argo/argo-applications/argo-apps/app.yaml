@@ -18,7 +18,7 @@ spec:
               #      values:
               #        - 'minikube-cluster'
           - git:
-              repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+              repoURL: https://github.com/yup3219/efk-minikube.git
               revision: main
               files: 
                 - path: 'k8s/helm/chart/apps/*/values.yaml'             
@@ -34,7 +34,7 @@ spec:
     spec: 
       project: '{{ .path.basename }}'
       source:
-        repoURL: https://github.com/yup3219/grafana-monitoring-minikube.git
+        repoURL: https://github.com/yup3219/efk-minikube.git
         targetRevision: main
         path: '{{ .path.path }}'
         helm:
