@@ -80,6 +80,8 @@ elasticsearch:
         value: "/usr/share/elasticsearch/config/certs/tls.crt"
       - name: xpack.security.transport.ssl.certificate_authorities
         value: "/usr/share/elasticsearch/config/certs/ca.crt"
+      - name: ELASTIC_PASSWORD   
+        value: "marketing"        
 
       
     createCert: true
@@ -92,9 +94,8 @@ elasticsearch:
       
       
   #   this.......................................................
-    extraEnvs:
-      - name: ELASTIC_PASSWORD   
-        value: "marketing"
+ #   extraEnvs:
+
 
     #  - name: MY_ENVIRONMENT_VAR
     #    value: the_value_goes_here
