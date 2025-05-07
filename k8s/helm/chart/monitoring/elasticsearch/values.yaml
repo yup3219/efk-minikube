@@ -15,8 +15,8 @@ elasticsearch:
       remote_cluster_client: "true"
       ml: "true"
 
-    replicas: 1
-    minimumMasterNodes: 1
+    replicas: 3
+    minimumMasterNodes: 2
 
     esMajorVersion: ""
 
@@ -137,15 +137,15 @@ elasticsearch:
     # additionals labels
     labels: {}
 
-    esJavaOpts: "-Xmx1g -Xms1g" # example: "-Xmx1g -Xms1g"
+    esJavaOpts: "-Xmx128m -Xms128m"  #"-Xmx1g -Xms1g" 
 
     resources:
       requests:
-        cpu: "1000m"
-        memory: "2Gi"
+        cpu: "100m"     # "1000m"
+        memory: "512M"  # "2Gi"
       limits:
-        cpu: "1000m"
-        memory: "2Gi"
+        cpu: "1000m"     # "1000m"
+        memory: "512M"  # "2Gi"
 
     initResources:
       {}
