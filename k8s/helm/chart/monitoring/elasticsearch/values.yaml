@@ -310,15 +310,15 @@ elasticsearch:
               INDEX_PATTERN=app-logs-*
               SHARD_COUNT=1
               REPLICA_COUNT=1
-              ES_URL=http://localhost:9200
-              echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' $ES_URL)" > /proc/1/fd/1
+              ES_URL=https://localhost:9200
+              echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' -k $ES_URL)" > /proc/1/fd/1
               start_time=$SECONDS
-              while [[ $(($SECONDS - $start_time)) -lt 240 ]] && [[ "$(curl -u elastic:marketing -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do
+              while [[ $(($SECONDS - $start_time)) -lt 240 ]] && [[ "$(curl -u elastic:marketing -s -o /dev/null -w '%{http_code}\n' -k $ES_URL)" != "200" ]]; do
               #  echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' $ES_URL)" > /proc/1/fd/1
                 sleep 1
               done
-              curl -u elastic:marketing -X PUT "$ES_URL/_ilm/policy/$POLICY_NAME" -H "Content-Type: application/json" -d @/usr/share/elasticsearch/config/ilm_policy.json
-              curl -u elastic:marketing -X PUT "$ES_URL/_index_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d "{
+              curl -u elastic:marketing -X PUT -k "$ES_URL/_ilm/policy/$POLICY_NAME" -H "Content-Type: application/json" -d @/usr/share/elasticsearch/config/ilm_policy.json
+              curl -u elastic:marketing -X PUT -k "$ES_URL/_index_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d "{
                 \"index_patterns\": [\"$INDEX_PATTERN\"],
                 \"template\": {
                   \"settings\": {
