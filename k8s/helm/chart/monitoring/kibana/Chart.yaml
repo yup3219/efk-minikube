@@ -1,0 +1,7 @@
+apiVersion: v2
+name: Kibana
+version: 1.0.0
+dependencies:
+  - name: kibana
+    version: "7.17"  
+    repository: https://helm.elastic.co
