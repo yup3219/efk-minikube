@@ -44,7 +44,7 @@ spec:
           ignoreMissingValueFiles: true        
       destination:
         name: "{{ .name }}"
-        namespace: '{{ .path.basename }}'
+        namespace: 'monitoring'
       syncPolicy: 
         syncOptions:
           - CreateNamespace=true
