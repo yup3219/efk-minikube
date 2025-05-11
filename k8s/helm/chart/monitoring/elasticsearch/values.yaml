@@ -7,20 +7,24 @@ elasticsearch:
     masterService: ""
 
     # Elasticsearch roles that will be applied to this nodeGroup
-    # These will be set as environment variables. E.g. node.master=true
+    # These will be set as environment variables. E.g. node.roles=master
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#node-roles
     roles:
-      master: "true"
-      ingest: "true"
-      data: "true"
-      remote_cluster_client: "true"
-      ml: "true"
+      - master
+      - data
+      - data_content
+      - data_hot
+      - data_warm
+      - data_cold
+      - ingest
+      - ml
+      - remote_cluster_client
+      - transform
 
-    replicas: 3
-    minimumMasterNodes: 2
+    replicas: 3   # 3
+    minimumMasterNodes: 2   # 2
 
     esMajorVersion: ""
-
-    clusterDeprecationIndexing: "false"
 
     # Allows you to add any config files in /usr/share/elasticsearch/config/
     # such as elasticsearch.yml and log4j2.properties
@@ -40,12 +44,14 @@ elasticsearch:
               }
             }
           }
-         }
-    #  elasticsearch.yml: {}
+         }    
+    #  elasticsearch.yml: |
     #    key:
     #      nestedkey: value
     #  log4j2.properties: |
     #    key = value
+
+    createCert: true
 
     esJvmOptions: {}
     #  processors.options: |
@@ -54,57 +60,7 @@ elasticsearch:
     # Extra environment variables to append to this nodeGroup
     # This will be appended to the current 'env:' key. You can use any of the kubernetes env
     # syntax here
-    
-    # My Implementation
-    
-    secret:
-      enabled: true
-      
-      
-    extraEnvs:
- #     - name: ELASTIC_PASSWORD
- #       valueFrom:
- #         secretKeyRef:
- #           name: elasticsearch-credentials
- #           key: password
-            
-      - name: xpack.security.enabled
-        value: 'true'
-      - name: xpack.security.transport.ssl.enabled
-        value: 'true'
-      - name: xpack.security.http.ssl.enabled
-        value: "true"        
-      - name: xpack.security.transport.ssl.verification_mode
-        value: 'certificate'
-      - name: xpack.security.transport.ssl.key
-        value: "/usr/share/elasticsearch/config/certs/tls.key"
-      - name: xpack.security.transport.ssl.certificate
-        value: "/usr/share/elasticsearch/config/certs/tls.crt"
-      - name: xpack.security.transport.ssl.certificate_authorities
-        value: "/usr/share/elasticsearch/config/certs/ca.crt"
-      - name: xpack.security.http.ssl.key
-        value: "/usr/share/elasticsearch/config/certs/tls.key"
-      - name: xpack.security.http.ssl.certificate
-        value: "/usr/share/elasticsearch/config/certs/tls.crt"
-      - name: xpack.security.http.ssl.certificate_authorities
-        value: "/usr/share/elasticsearch/config/certs/ca.crt"        
-      - name: ELASTIC_PASSWORD   
-        value: "marketing"        
-
-      
-    createCert: true
-      
-    secretMounts: 
-      - name: elastic-certificates
-        secretName: elasticsearch-certificates
-        path: /usr/share/elasticsearch/config/certs
-        defaultMode: 0755
-      
-      
-  #   this.......................................................
- #   extraEnvs:
-
-
+    extraEnvs: []
     #  - name: MY_ENVIRONMENT_VAR
     #    value: the_value_goes_here
 
@@ -115,14 +71,15 @@ elasticsearch:
     # - configMapRef:
     #     name: config-map
 
+    # Disable it to use your own elastic-credential Secret.
+    secret:
+      enabled: true
+      password: "marketing" # generated randomly if not defined
+
     # A list of secrets and their paths to mount inside the pod
     # This is useful for mounting certificates for security and for mounting
     # the X-Pack license
-
-
-       
-    #   this.......................................................
-    # secretMounts: []
+    secretMounts: []
     #  - name: elastic-certificates
     #    secretName: elastic-certificates
     #    path: /usr/share/elasticsearch/config/certs
@@ -135,34 +92,32 @@ elasticsearch:
     #  - "bar.local"
 
     image: "docker.elastic.co/elasticsearch/elasticsearch"
-    imageTag: "7.17.3"
+    imageTag: "8.5.1"
     imagePullPolicy: "IfNotPresent"
 
-    podAnnotations:
-      {}
-      # iam.amazonaws.com/role: es-cluster
+    podAnnotations: {}
+    # iam.amazonaws.com/role: es-cluster
 
     # additionals labels
     labels: {}
 
-    esJavaOpts: "-Xmx128m -Xms128m"  #"-Xmx1g -Xms1g" 
+    esJavaOpts: "-Xmx128m -Xms128m" # example: "-Xmx1g -Xms1g"
 
     resources:
       requests:
-        cpu: "100m"     # "1000m"
-        memory: "512M"  # "2Gi"
+        cpu: "100m"
+        memory: "512M"
       limits:
-        cpu: "1000m"     # "1000m"
-        memory: "512M"  # "2Gi"
+        cpu: "500m"
+        memory: "512M"
 
-    initResources:
-      {}
-      # limits:
-      #   cpu: "25m"
-      #   # memory: "128Mi"
-      # requests:
-      #   cpu: "25m"
-      #   memory: "128Mi"
+    initResources: {}
+    # limits:
+    #   cpu: "25m"
+    #   # memory: "128Mi"
+    # requests:
+    #   cpu: "25m"
+    #   memory: "128Mi"
 
     networkHost: "0.0.0.0"
 
@@ -205,28 +160,24 @@ elasticsearch:
         enabled: false
       annotations: {}
 
-    extraVolumes:
-      []
-      # - name: extras
-      #   emptyDir: {}
+    extraVolumes: []
+    # - name: extras
+    #   emptyDir: {}
 
-    extraVolumeMounts:
-      []
-      # - name: extras
-      #   mountPath: /usr/share/extras
-      #   readOnly: true
+    extraVolumeMounts: []
+    # - name: extras
+    #   mountPath: /usr/share/extras
+    #   readOnly: true
 
-    extraContainers:
-      []
-      # - name: do-something
-      #   image: busybox
-      #   command: ['do', 'something']
+    extraContainers: []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
 
-    extraInitContainers:
-      []
-      # - name: do-something
-      #   image: busybox
-      #   command: ['do', 'something']
+    extraInitContainers: []
+    # - name: do-something
+    #   image: busybox
+    #   command: ['do', 'something']
 
     # This is the PriorityClass settings as defined in
     # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
@@ -238,7 +189,7 @@ elasticsearch:
 
     # Hard means that by default pods will only be scheduled if there are enough nodes for them
     # and that they will never end up on the same node. Setting this to soft will do this "best effort"
-    antiAffinity: "soft"
+    antiAffinity: "soft" # hard
 
     # This is the node affinity settings as defined in
     # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#node-affinity-beta-feature
@@ -304,8 +255,8 @@ elasticsearch:
       successThreshold: 3
       timeoutSeconds: 5
 
-    # https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
-    clusterHealthCheckParams: "wait_for_status=green&timeout=1s"     # Refer this: https://stackoverflow.com/questions/64533991/k8s-elasticsearch-with-filebeat-is-keeping-not-ready-after-rebooting
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html#request-params wait_for_status
+    clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
     ## Use an alternate scheduler.
     ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
@@ -313,15 +264,14 @@ elasticsearch:
     schedulerName: ""
 
     imagePullSecrets: []
-    
+
     nodeSelector: {}
-   #   node-type/dedicated: monitoring
-    tolerations: {}
-    #  - key: "node-type/dedicated"
-    #    operator: "Equal"
-    #    value: "monitoring"
-    #    effect: "NoSchedule"
-   
+ #     node-type/dedicated: monitoring
+    tolerations: []
+ #     - key: "node-type/dedicated"
+ #       operator: "Equal"
+ #       value: "monitoring"
+ #       effect: "NoSchedule"
 
 
     # Enabling this will publicly expose your Elasticsearch instance.
@@ -346,6 +296,7 @@ elasticsearch:
     fullnameOverride: ""
     healthNameOverride: ""
 
+  
     lifecycle:
       postStart:
         exec:
@@ -357,17 +308,17 @@ elasticsearch:
               TEMPLATE_NAME=app-logs-template
               POLICY_NAME=app-logs-policy-delete-7-after-days
               INDEX_PATTERN=app-logs-*
-              SHARD_COUNT=3
+              SHARD_COUNT=1
               REPLICA_COUNT=1
-              ES_URL=https://localhost:9200
-              echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' -k $ES_URL)" > /proc/1/fd/1
+              ES_URL=http://localhost:9200
+              echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' $ES_URL)" > /proc/1/fd/1
               start_time=$SECONDS
-              while [[ $(($SECONDS - $start_time)) -lt 240 ]] && [[ "$(curl -u elastic:marketing -s -o /dev/null -w '%{http_code}\n' -k $ES_URL)" != "200" ]]; do
+              while [[ $(($SECONDS - $start_time)) -lt 240 ]] && [[ "$(curl -u elastic:marketing -s -o /dev/null -w '%{http_code}\n' $ES_URL)" != "200" ]]; do
               #  echo "Elasticsearch status code: $(curl -u elastic:marketing -w '%{http_code}' $ES_URL)" > /proc/1/fd/1
                 sleep 1
               done
-              curl -u elastic:marketing -X PUT -k "$ES_URL/_ilm/policy/$POLICY_NAME" -H "Content-Type: application/json" -d @/usr/share/elasticsearch/config/ilm_policy.json
-              curl -u elastic:marketing -X PUT -k "$ES_URL/_index_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d "{
+              curl -u elastic:marketing -X PUT "$ES_URL/_ilm/policy/$POLICY_NAME" -H "Content-Type: application/json" -d @/usr/share/elasticsearch/config/ilm_policy.json
+              curl -u elastic:marketing -X PUT "$ES_URL/_index_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d "{
                 \"index_patterns\": [\"$INDEX_PATTERN\"],
                 \"template\": {
                   \"settings\": {
@@ -377,7 +328,6 @@ elasticsearch:
                   }
                 }
               }"
-        
 
     sysctlInitContainer:
       enabled: true
@@ -406,6 +356,7 @@ elasticsearch:
         #     role: frontend
         #   matchExpressions:
         #     - {key: role, operator: In, values: [frontend]}
+
         ## Additional NetworkPolicy Ingress "from" rules to set. Note that all rules are OR-ed.
         ##
         # additionalRules:
@@ -440,7 +391,3 @@ elasticsearch:
 
     tests:
       enabled: true
-
-    # Deprecated
-    # please use the above podSecurityContext.fsGroup instead
-    fsGroup: ""

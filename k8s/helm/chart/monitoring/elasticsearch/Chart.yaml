@@ -6,7 +6,7 @@ appVersion: "0.0.1"
 
 dependencies:
   - name: elasticsearch
-    version: "7.17"  
+    version: "8.5.1"  
     repository: https://helm.elastic.co
 
 
