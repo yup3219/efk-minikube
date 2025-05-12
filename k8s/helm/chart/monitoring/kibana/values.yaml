@@ -67,8 +67,8 @@ kibana:
     # such as kibana.yml
     kibanaConfig:
       kibana.yml: |
-        elasticsearch.username: "elastic"
-        elasticsearch.password: "marketing"
+        elasticsearch.username: "kibana_system"
+        elasticsearch.password: "market"
     #   kibana.yml: |
     #     key:
     #       nestedkey: value
