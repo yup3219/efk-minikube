@@ -106,10 +106,10 @@ elasticsearch:
     resources:
       requests:
         cpu: "100m"
-        memory: "512M"
+        memory: "800M"
       limits:
-        cpu: "500m"
-        memory: "512M"
+        cpu: "600m"
+        memory: "800M"
 
     initResources: {}
     # limits:
